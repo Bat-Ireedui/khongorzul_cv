@@ -451,27 +451,6 @@
     revs.forEach(function(el){ el.classList.add('in'); });
   }
 
-  /* inertial wheel smoothing — desktop wheel only; touch, keyboard,
-     scrollbar and pinch-zoom stay native; off under reduced motion */
-  var targetY = scrollY, curY = scrollY, gliding = false;
-  function maxScroll(){ return document.documentElement.scrollHeight - innerHeight; }
-  function glide(){
-    curY += (targetY - curY) * 0.13;
-    if (Math.abs(targetY - curY) < 0.5){ curY = targetY; scrollTo(0, curY); gliding = false; return; }
-    scrollTo(0, curY);
-    requestAnimationFrame(glide);
-  }
-  addEventListener('wheel', function(e){
-    if (reduce.matches || e.ctrlKey) return;
-    var dy = e.deltaY;
-    if (e.deltaMode === 1) dy *= 33; else if (e.deltaMode === 2) dy *= innerHeight;
-    e.preventDefault();
-    if (!gliding) targetY = curY = scrollY;
-    targetY = Math.max(0, Math.min(maxScroll(), targetY + dy));
-    if (!gliding){ gliding = true; requestAnimationFrame(glide); }
-  }, { passive: false });
-  addEventListener('scroll', function(){ if (!gliding){ targetY = curY = scrollY; } }, { passive: true });
-
   /* parallax orbs + scroll-driven experience rail — one rAF loop */
   var orbs = [], rail = document.querySelector('.timeline'), nodes = [], railTop = 0, railLen = 1;
   function measure(){
